@@ -8,7 +8,7 @@ Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A WordPress plugin that allows you to easily create related posts that don't lag your server!
+A WordPress plugin that allows you to easily connect posts that don't lag your server!
 
 == Description ==
 
