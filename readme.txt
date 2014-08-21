@@ -44,7 +44,7 @@ Post Connector is WordPress Network / Multisite compatible. Each site will have 
 > - Sortable post connections
 > - Backwards linking (parent to child AND child to parent)
 > - A developer friendly API
-> - Priority support
+> - Priority Email support
 >
 > [More information](https://www.post-connector.com/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link) | [Upgrade now >>](https://www.post-connector.com/go-pro/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link)
 
