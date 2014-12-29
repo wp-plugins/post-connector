@@ -3,18 +3,30 @@ Contributors: barrykooij
 Donate link: https://www.post-connector.com/
 Tags: post connector, related, related posts, post connection, connection, connections, shortcode, widget
 Requires at least: 3.6
-Tested up to: 4.0
-Stable tag: 1.0.1
+Tested up to: 4.1
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A WordPress plugin that allows you to easily connect posts that don't lag your server!
+A WordPress plugin that allows you to easily create related posts that don't lag your server!
 
 == Description ==
 
 = Post Connector =
 
 In WordPress, post types are often related, for instance, you might want to relate recipes to ingredients. But to do so, you’d normally have to use a custom taxonomy. With Post Connector, you can directly relate post types to post types, foregoing all the hassle of having to create loads of custom taxonomies and just allowing you to do what you really want to do.
+
+> **Premium features**
+>
+> The Pro version of the plugin comes with the following features:
+>
+> - Related content suggestions
+> - Sortable post connections
+> - Backwards linking (parent to child AND child to parent)
+> - A developer friendly API
+> - Priority support
+>
+> [More information](https://www.post-connector.com/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link) | [Upgrade now >>](https://www.post-connector.com/go-pro/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link)
 
 = No coding required =
 Creating links, linking posts and displaying posts in Post Connector can all be done without coding. Stuff you used to need a developer for can now “just” be done by clicking around in your WordPress backend.
@@ -36,18 +48,6 @@ Post Connector is available in English, Dutch, German and Spanish and soon many 
 = Network/Multisite compatible =
 Post Connector is WordPress Network / Multisite compatible. Each site will have its own version of Post Connector and thus have it own links.
 
-> **Premium features**
->
-> The Pro version of the plugin comes with the following features:
->
-> - Related content suggestions
-> - Sortable post connections
-> - Backwards linking (parent to child AND child to parent)
-> - A developer friendly API
-> - Priority Email support
->
-> [More information](https://www.post-connector.com/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link) | [Upgrade now >>](https://www.post-connector.com/go-pro/?utm_source=wp-plugin-repo&utm_medium=link&utm_campaign=after-features-link)
-
 **More information**
 
 - Other [WordPress plugins](http://profiles.wordpress.org/barrykooij/) by [Barry Kooij](http://www.barrykooij.com/)
@@ -64,6 +64,8 @@ Post Connector is WordPress Network / Multisite compatible. Each site will have 
 
 == Frequently Asked Questions ==
 
+
+
 == Screenshots ==
 
 1. The connection overview screen. Here you can manage your connections.
@@ -76,6 +78,13 @@ Post Connector is WordPress Network / Multisite compatible. Each site will have 
 8. Post Connector comes with a widget so you can display linked posts in any sidebar you want.
 
 == Changelog ==
+
+= 1.0.3 - December 29, 2014 =
+* Changed the way the plugin is loaded.
+* Fixed TinyMCE bug that removed all buttons if user had insufficient permissions, props remyvv.
+
+= 1.0.2 - December 16, 2014 =
+* Changed the way the plugin is loaded.
 
 = 1.0.1 - July 21, 2014 =
 * Added the 'pc_connection_edit_form_display_linked_children' action.
