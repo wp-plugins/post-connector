@@ -49,7 +49,7 @@ class SP_Create_Link_List_Table extends WP_List_Table {
 		$new_views = array();
 
 		foreach ( $views_arr as $key => $val ) {
-			$new_views[$key] = "<a href='" . add_query_arg( array( 'pc-view' => $key, 'paged' => 1 ) ) . "'" . ( ( $current == $key ) ? " class='current'" : "" ) . ">{$val}</a>";
+			$new_views[$key] = "<a href='" . esc_url( add_query_arg( array( 'pc-view' => $key, 'paged' => 1 ) ) ) . "'" . ( ( $current == $key ) ? " class='current'" : "" ) . ">{$val}</a>";
 		}
 
 		return $new_views;
@@ -83,9 +83,6 @@ class SP_Create_Link_List_Table extends WP_List_Table {
 	 */
 	public function prepare_items() {
 
-		// Get current view
-		$view = $this->get_current_view();
-
 		// Set table properties
 		$columns               = $this->get_columns();
 		$hidden                = array();
@@ -103,23 +100,40 @@ class SP_Create_Link_List_Table extends WP_List_Table {
 		// Get Data
 		$this->data = array();
 
+		// Get per page
+		$screen   = get_current_screen();
+		$per_page = absint( get_user_meta( get_current_user_id(), $screen->get_option( 'per_page', 'option' ), true ) );
+		$per_page = ( ( $per_page > 0 ) ? $per_page : 20 );
+		$paged    = absint( isset( $_GET['paged'] ) ? $_GET['paged'] : 1 );
+		$orderby  = isset( $_GET['orderby'] ) ? $_GET['orderby'] : 'title';
+		$order    = isset( $_GET['order'] ) ? $_GET['order'] : 'asc';
+
 		// Get posts
-		$posts = get_posts( array( 'post_type' => $this->post_type, 'posts_per_page' => '-1', 'suppress_filters' => false ) );
+		$post_query = new WP_Query( array(
+			'post_type'        => $this->post_type,
+			'posts_per_page'   => $per_page,
+			'paged'            => $paged,
+			'suppress_filters' => false,
+			'orderby'          => $orderby,
+			'order'            => $order,
+		) );
 
 		// Format data for table
-		if ( count( $posts ) > 0 ) {
-			foreach ( $posts as $post ) {
-				$this->data[] = array( 'ID' => $post->ID, 'title' => $post->post_title );
+		if ( $post_query->have_posts() ) {
+			while($post_query->have_posts()) {
+				$next_post = $post_query->next_post();
+				$this->data[] = array( 'ID' => $next_post->ID, 'title' => $next_post->post_title );
 			}
 		}
 
 		// Remove search filter
 		remove_filter( 'posts_where', array( $this, 'filter_posts_where' ) );
 
-		// Sort
-		if ( count( $this->data ) > 0 ) {
-			usort( $this->data, array( $this, 'custom_reorder' ) );
-		}
+		// Pagination
+		$this->set_pagination_args( array(
+			'total_items' => $post_query->found_posts,
+			'per_page'    => $per_page
+		) );
 
 		// Set items
 		$this->items = $this->data;
@@ -134,26 +148,6 @@ class SP_Create_Link_List_Table extends WP_List_Table {
 		$sortable_columns = array();
 		$sortable_columns['title'] = array( 'title', false );
 		return $sortable_columns;
-	}
-
-	/**
-	 * Method to do the custom reorder
-	 *
-	 * @param $a
-	 * @param $b
-	 *
-	 * @return int
-	 */
-	public function custom_reorder( $a, $b ) {
-		// If no sort, default to title
-		$orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'title';
-		// If no order, default to asc
-		$order = ( ! empty( $_GET['order'] ) ) ? $_GET['order'] : 'asc';
-		// Determine sort order
-		$result = strcmp( $a[$orderby], $b[$orderby] );
-
-		// Send final sort direction to usort
-		return ( $order === 'asc' ) ? $result : - $result;
 	}
 
 	/**
