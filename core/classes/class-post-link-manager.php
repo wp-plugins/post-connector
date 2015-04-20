@@ -8,35 +8,32 @@ class SP_Post_Link_Manager {
 
 	private $temp_child_order;
 
-	public function __construct() {
-	}
-
 	/**
 	 * Create query arguments used to fetch links
 	 *
 	 * @access private
 	 *
 	 * @param string $pt_slug
-	 * @param int    $post_id
+	 * @param int $post_id
 	 * @param string $meta_key
 	 *
 	 * @return array
 	 */
 	private function create_link_args( $pt_slug, $meta_key, $post_id ) {
 		$args = array(
-				'context'        => SP_Constants::QUERY_CONTEXT,
-				'sp_slug'        => $pt_slug,
-				'post_type'      => SP_Constants::CPT_LINK,
-				'posts_per_page' => - 1,
-				'orderby'        => 'menu_order',
-				'order'          => 'ASC',
-				'meta_query'     => array(
-						array(
-								'key'     => $meta_key,
-								'value'   => $post_id,
-								'compare' => '=',
-						)
+			'context'        => SP_Constants::QUERY_CONTEXT,
+			'sp_slug'        => $pt_slug,
+			'post_type'      => SP_Constants::CPT_LINK,
+			'posts_per_page' => - 1,
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+			'meta_query'     => array(
+				array(
+					'key'     => $meta_key,
+					'value'   => $post_id,
+					'compare' => '=',
 				)
+			)
 		);
 
 		return $args;
@@ -54,24 +51,24 @@ class SP_Post_Link_Manager {
 	 */
 	private function get_link_count( $pt_link_id, $parent_id ) {
 		$link_query = new WP_Query(
-				array(
-						'post_type'      => SP_Constants::CPT_LINK,
-						'posts_per_page' => - 1,
-						'orderby'        => 'menu_order',
-						'order'          => 'ASC',
-						'meta_query'     => array(
-								array(
-										'key'     => SP_Constants::PM_PT_LINK,
-										'value'   => $pt_link_id,
-										'compare' => '=',
-								),
-								array(
-										'key'     => SP_Constants::PM_PARENT,
-										'value'   => $parent_id,
-										'compare' => '=',
-								),
-						)
+			array(
+				'post_type'      => SP_Constants::CPT_LINK,
+				'posts_per_page' => - 1,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
+				'meta_query'     => array(
+					array(
+						'key'     => SP_Constants::PM_PT_LINK,
+						'value'   => $pt_link_id,
+						'compare' => '=',
+					),
+					array(
+						'key'     => SP_Constants::PM_PARENT,
+						'value'   => $parent_id,
+						'compare' => '=',
+					),
 				)
+			)
 		);
 
 		// Reset global post variables
@@ -101,10 +98,10 @@ class SP_Post_Link_Manager {
 
 		// Create post link
 		$link_id = wp_insert_post( array(
-				'post_title'  => 'sp_' . $ptl->get_slug(),
-				'post_type'   => SP_Constants::CPT_LINK,
-				'post_status' => 'publish',
-				'menu_order'  => $this->get_link_count( $pt_link_id, $parent_id ),
+			'post_title'  => 'sp_' . $ptl->get_slug(),
+			'post_type'   => SP_Constants::CPT_LINK,
+			'post_status' => 'publish',
+			'menu_order'  => $this->get_link_count( $pt_link_id, $parent_id ),
 		) );
 
 		// Create post meta
@@ -148,8 +145,8 @@ class SP_Post_Link_Manager {
 	 * @access public
 	 *
 	 * @param string $pt_slug
-	 * @param int    $parent_id
-	 * @param array  $extra_args
+	 * @param int $parent_id
+	 * @param array $extra_args
 	 *
 	 * @return array
 	 */
@@ -202,7 +199,7 @@ class SP_Post_Link_Manager {
 		// @todo remove the usage of get_the_id()
 		$child_ids = array();
 		while ( $link_query->have_posts() ) : $link_query->the_post();
-			$child_ids[get_the_id()] = get_post_meta( get_the_id(), SP_Constants::PM_CHILD, true );
+			$child_ids[ get_the_id() ] = get_post_meta( get_the_id(), SP_Constants::PM_CHILD, true );
 		endwhile;
 
 		// Get children with custom args
@@ -223,9 +220,9 @@ class SP_Post_Link_Manager {
 				$child_id_values = array_values( $child_ids );
 				$child_post_type = get_post_type( array_shift( $child_id_values ) );
 				$child_args      = array(
-						'post_type'      => $child_post_type,
-						'posts_per_page' => - 1,
-						'post__in'       => $child_ids,
+					'post_type'      => $child_post_type,
+					'posts_per_page' => - 1,
+					'post__in'       => $child_ids,
 				);
 
 				// Extra arguments
@@ -236,7 +233,7 @@ class SP_Post_Link_Manager {
 
 				while ( $child_query->have_posts() ) : $child_query->the_post();
 					// Add post to correct original sort key
-					$children[array_search( $child_query->post->ID, $child_ids )] = $child_query->post;
+					$children[ array_search( $child_query->post->ID, $child_ids ) ] = $child_query->post;
 				endwhile;
 
 				// Fix sorting
@@ -249,7 +246,7 @@ class SP_Post_Link_Manager {
 			// No custom arguments found, get all objects of stored ID's
 			$children = array();
 			foreach ( $child_ids as $link_id => $child_id ) {
-				$children[$link_id] = get_post( $child_id );
+				$children[ $link_id ] = get_post( $child_id );
 			}
 		}
 
@@ -320,21 +317,21 @@ class SP_Post_Link_Manager {
 	 */
 	public function delete_links_related_to( $post_id ) {
 		$involved_query = new WP_Query( array(
-				'post_type'      => SP_Constants::CPT_LINK,
-				'posts_per_page' => - 1,
-				'meta_query'     => array(
-						'relation' => 'OR',
-						array(
-								'key'     => SP_Constants::PM_PARENT,
-								'value'   => $post_id,
-								'compare' => '=',
-						),
-						array(
-								'key'     => SP_Constants::PM_CHILD,
-								'value'   => $post_id,
-								'compare' => '=',
-						)
+			'post_type'      => SP_Constants::CPT_LINK,
+			'posts_per_page' => - 1,
+			'meta_query'     => array(
+				'relation' => 'OR',
+				array(
+					'key'     => SP_Constants::PM_PARENT,
+					'value'   => $post_id,
+					'compare' => '=',
+				),
+				array(
+					'key'     => SP_Constants::PM_CHILD,
+					'value'   => $post_id,
+					'compare' => '=',
 				)
+			)
 		) );
 		while ( $involved_query->have_posts() ) : $involved_query->the_post();
 			wp_delete_post( $involved_query->post->ID, true );
@@ -344,19 +341,19 @@ class SP_Post_Link_Manager {
 
 	public function get_all_links( $pt_link_id ) {
 		$link_query = new WP_Query(
-				array(
-						'post_type'      => SP_Constants::CPT_LINK,
-						'posts_per_page' => - 1,
-						'orderby'        => 'menu_order',
-						'order'          => 'ASC',
-						'meta_query'     => array(
-								array(
-										'key'     => SP_Constants::PM_PT_LINK,
-										'value'   => $pt_link_id,
-										'compare' => '=',
-								),
-						)
+			array(
+				'post_type'      => SP_Constants::CPT_LINK,
+				'posts_per_page' => - 1,
+				'orderby'        => 'menu_order',
+				'order'          => 'ASC',
+				'meta_query'     => array(
+					array(
+						'key'     => SP_Constants::PM_PT_LINK,
+						'value'   => $pt_link_id,
+						'compare' => '=',
+					),
 				)
+			)
 		);
 		$links      = array();
 		while ( $link_query->have_posts() ) : $link_query->the_post();
@@ -370,57 +367,70 @@ class SP_Post_Link_Manager {
 	}
 
 	/**
-	 * Generate the children list
+	 * Generate the generic list of posts
 	 *
-	 * @param        $slug
-	 * @param        $parent
-	 * @param        $link
-	 * @param        $excerpt
+	 * @param array $posts
+	 * @param string $slug
+	 * @param string $link
+	 * @param string $display_excerpt
+	 * @param string $display_image
 	 * @param string $header_tag
 	 *
 	 * @return string
 	 */
-	public function generate_children_list( $slug, $parent, $link, $excerpt, $header_tag = 'b' ) {
+	protected function generate_list( $posts, $slug, $link, $display_excerpt, $display_image, $header_tag ) {
 
-		// Make the header tag filterable
-		$header_tag = apply_filters( 'pc_children_list_header_tag', $header_tag );
+		// String to bool, blame backwards compatibility
+		if ( 'false' == $display_image ) {
+			$display_image = false;
+		}
 
-
-
-		// Get the children
-		$children = $this->get_children( $slug, $parent );
-
-
-		$return = "";
-
-		if ( count( $children ) > 0 ) {
+		$return = '';
+		if ( count( $posts ) > 0 ) {
 			$return .= "<div class='pc-post-list pc-{$slug}'>\n";
 
-				$return .= "<ul class='subposts_show-childs subposts_slug_{$slug}'>\n";
-				foreach ( $children as $child ) {
+			$return .= "<ul class='subposts_show-childs subposts_slug_{$slug}'>\n";
+			foreach ( $posts as $post ) {
 
-					$return .= "<li class='subposts_child subposts_{$child->ID}'>";
-					$return .= "<{$header_tag}>";
-					if ( $link == 'true' ) {
-						$return .= "<a href='" . get_permalink( $child->ID ) . "'>";
-					}
-					$return .= $child->post_title;
-					if ( $link == 'true' ) {
+				$return .= "<li class='subposts_child subposts_{$post->ID}'>";
+
+				if ( true == $display_image ) {
+					if ( has_post_thumbnail( $post->ID ) ) {
+
+						/**
+						 * Filter: 'pc_apdc_thumbnail_size' - Allows changing the thumbnail size of the thumbnail in de APDC section
+						 *
+						 * @api String $thumbnail_size The current/default thumbnail size.
+						 */
+						$thumb_size = apply_filters( 'pc_apdc_thumbnail_size', 'post-thumbnail' );
+
+						$return .= "<a href='" . get_permalink( $post->ID ) . "'>";
+						$return .= get_the_post_thumbnail( $post->ID, $thumb_size );
 						$return .= "</a>";
 					}
-					$return .= "</{$header_tag}>";
-
-					// Excerpt
-					if ( $excerpt == 'true' ) {
-						$the_excerpt = !empty( $child->post_excerpt ) ? $child->post_excerpt : $child->post_content;
-						if ( $the_excerpt != '' ) {
-							$return .= "<p>{$the_excerpt}</p>";
-						}
-					}
-
-					$return .= "</li>\n";
 				}
-				$return .= "</ul>\n";
+
+				$return .= "<{$header_tag}>";
+				if ( $link == 'true' ) {
+					$return .= "<a href='" . get_permalink( $post->ID ) . "'>";
+				}
+				$return .= $post->post_title;
+				if ( $link == 'true' ) {
+					$return .= "</a>";
+				}
+				$return .= "</{$header_tag}>";
+
+				// Excerpt
+				if ( true == $display_excerpt ) {
+					$the_excerpt = ( '' != $post->post_excerpt ) ? $post->post_excerpt : wp_trim_words( strip_tags( strip_shortcodes( $post->post_content ) ), apply_filters( 'pc_list_excerpt_length', apply_filters( 'excerpt_length', 20 ) ) );
+					if ( $the_excerpt != '' ) {
+						$return .= "<p>{$the_excerpt}</p>";
+					}
+				}
+
+				$return .= "</li>\n";
+			}
+			$return .= "</ul>\n";
 
 			$return .= "</div>\n";
 		}
@@ -428,4 +438,32 @@ class SP_Post_Link_Manager {
 		return $return;
 	}
 
+	/**
+	 * Generate the children list
+	 *
+	 * @param string $slug
+	 * @param string $parent
+	 * @param string $link
+	 * @param string $excerpt
+	 * @param string $header_tag
+	 * @param bool $display_image
+	 *
+	 * @return string
+	 */
+	public function generate_children_list( $slug, $parent, $link, $excerpt, $header_tag = 'b', $display_image = false ) {
+
+		// Make the header tag filterable
+		$header_tag = apply_filters( 'pc_children_list_header_tag', $header_tag );
+
+		// Get the children
+		$children = $this->get_children( $slug, $parent );
+
+		// Returned string
+		$return = $this->generate_list( $children, $slug, $link, $excerpt, $display_image, $header_tag );
+
+		// Restore global $post of main query
+		wp_reset_postdata();
+
+		return $return;
+	}
 }
